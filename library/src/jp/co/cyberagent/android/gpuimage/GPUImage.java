@@ -236,7 +236,7 @@ public class GPUImage {
      * @param uri the uri of the new image
      */
     public void setImage(final Uri uri, LoadImageListener listener) {
-        new LoadImageFileTask(this, uri, listener).execute();
+        new LoadImageUriTask(this, uri, listener).execute();
     }
 
     public void setImage(final Uri uri) {
