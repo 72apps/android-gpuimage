@@ -562,16 +562,28 @@ public class GPUImage {
         }
     }
 
+
+    public interface LoadImageListener {
+        void onLoaded(Boolean success);
+    }
+
     private abstract class LoadImageTask extends AsyncTask<Void, Void, Bitmap> {
 
         private final GPUImage mGPUImage;
         private int mOutputWidth;
         private int mOutputHeight;
+        private final LoadImageListener loadImageListener;
 
+        public LoadImageTask(final GPUImage gpuImage, LoadImageListener listener) {
+            mGPUImage = gpuImage;
+            loadImageListener = listener;
+        }
+        
         @SuppressWarnings("deprecation")
         public LoadImageTask(final GPUImage gpuImage) {
-            mGPUImage = gpuImage;
+            this(gpuImage,null);
         }
+
 
         @Override
         protected Bitmap doInBackground(Void... params) {
@@ -594,6 +606,10 @@ public class GPUImage {
             super.onPostExecute(bitmap);
             mGPUImage.deleteImage();
             mGPUImage.setImage(bitmap);
+
+            if(this.loadImageListener != null) {
+                this.loadImageListener.onLoaded(true);
+            }
         }
 
         protected abstract Bitmap decode(BitmapFactory.Options options);
