@@ -235,8 +235,12 @@ public class GPUImage {
      *
      * @param uri the uri of the new image
      */
+    public void setImage(final Uri uri, LoadImageListener listener) {
+        new LoadImageFileTask(this, uri, listener).execute();
+    }
+
     public void setImage(final Uri uri) {
-        new LoadImageUriTask(this, uri).execute();
+        this.setImage(uri, null);
     }
 
     /**
@@ -244,8 +248,12 @@ public class GPUImage {
      *
      * @param file the file of the new image
      */
+    public void setImage(final File file, LoadImageListener listener) {
+        new LoadImageFileTask(this, file, listener).execute();
+    }
+
     public void setImage(final File file) {
-        new LoadImageFileTask(this, file).execute();
+        this.setImage(file, null);
     }
 
     private String getPath(final Uri uri) {
@@ -492,9 +500,13 @@ public class GPUImage {
 
         private final Uri mUri;
 
-        public LoadImageUriTask(GPUImage gpuImage, Uri uri) {
-            super(gpuImage);
+        public LoadImageUriTask(GPUImage gpuImage, Uri uri, LoadImageListener listener) {
+            super(gpuImage, listener);
             mUri = uri;
+        }
+
+        public LoadImageUriTask(GPUImage gpuImage, Uri uri) {
+            this(gpuImage, uri, null);
         }
 
         @Override
@@ -533,9 +545,12 @@ public class GPUImage {
 
         private final File mImageFile;
 
-        public LoadImageFileTask(GPUImage gpuImage, File file) {
-            super(gpuImage);
+        public LoadImageFileTask(GPUImage gpuImage, File file, LoadImageListener listener) {
+            super(gpuImage, listener);
             mImageFile = file;
+        }
+        public LoadImageFileTask(GPUImage gpuImage, File file) {
+            this(gpuImage, file, null);
         }
 
         @Override
@@ -578,7 +593,7 @@ public class GPUImage {
             mGPUImage = gpuImage;
             loadImageListener = listener;
         }
-        
+
         @SuppressWarnings("deprecation")
         public LoadImageTask(final GPUImage gpuImage) {
             this(gpuImage,null);
